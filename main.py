@@ -17,7 +17,7 @@ from discord import Streaming
 
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V1.5.5'), \
+bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V1.6'), \
                     help_command=None)
 
 # Cargo el token de Discord
