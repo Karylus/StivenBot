@@ -17,7 +17,7 @@ from discord import Streaming
 
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V1.6'), \
+bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V1.6.1'), \
                     help_command=None)
 
 # Cargo el token de Discord
@@ -46,16 +46,16 @@ async def help(ctx):
     embed.set_author(name='Comando Ayuda')
     embed.set_thumbnail(url='https://i.imgur.com/u56OFyl.jpeg')
     embed.add_field(name='stiven', value='Citas del dios Stiven', inline=False)
-    embed.add_field(name='sugerir', value='Manda una sugerencia con el formato -> !sugerir [Sugerencia]', inline=False)
+    embed.add_field(name='sugerir', value='Manda una sugerencia con el formato:\n--> !sugerir [Sugerencia]', inline=False)
     embed.add_field(name='suerte', value='Tira un dado de 6 caras', inline=False)
     embed.add_field(name='ruleta', value='Juega a la ruleta rusa', inline=False)
-    embed.add_field(name='encuesta "Pregunta" "Opc0" ... "Opc10"', value='Crea una encuesta (Max 10 opciones)', inline=False)
+    embed.add_field(name='encuesta', value='Crea una encuesta (Max 10 opciones) con el formato:\n--> !encuesta "Pregunta" "Opc0" ... "Opc9"', inline=False)
     embed.add_field(name='clear "N" [ADMIN]', value='Elimina "N" mensajes del chat (Max. 100)', inline=False)
     embed.add_field(name='jota [ADMIN]', value='Avisa de que Jota está en directo', inline=False)
     embed.add_field(name='uces [ADMIN]', value='Avisa de que uCes_ está en directo', inline=False)
     embed.add_field(name='añadirtwitch "nombreTwitch" [ADMIN]', value='Añade el "nombreTwitch" para el usuario en la lista de streamers', inline=False)
     embed.add_field(name='Prefijo', value='!', inline=True)
-    embed.add_field(name='Versión', value='V1.5', inline=True)
+    embed.add_field(name='Versión', value='V1.6.1', inline=True)
     embed.set_footer(text='Bot creado por Karylus#0007')
 
     await ctx.send(embed=embed)
@@ -63,7 +63,7 @@ async def help(ctx):
 # Lee citas de Stiven de 'frasesStiven.txt' con el comando !stiven
 @bot.command(name='stiven')
 async def stiven(ctx):
-    with open('frasesStiven.txt', 'r') as f:
+    with open('data/frasesStiven.txt', 'r') as f:
         read = f.read()
         array = read.split('\n')
         quote = random.choice(array)
@@ -100,13 +100,13 @@ async def on_member_join(member):
     avatar = avatar.resize((350, 350))
 
     # Abre la portada y pega el avatar
-    banner = Image.open('portada.png').convert('RGBA')
+    banner = Image.open('data/portada.png').convert('RGBA')
     overlay = Image.new('RGBA', banner.size, 0)
     overlay.paste(avatar, (800, 85))
     banner.alpha_composite(overlay)
 
     # Crea una imagen para cada usuario por si se unen dos a la vez
-    welcome_file_path = f'welcome_{member.name}.jpg'
+    welcome_file_path = f'data/welcome_{member.name}.jpg'
     banner.convert('RGB').save(welcome_file_path)
 
     # Envia la imagen y un mensaje de bienvenida
@@ -118,6 +118,18 @@ async def on_member_join(member):
     guild = bot.get_guild(736523939102195746)
     role = get(guild.roles, id=736523939102195747)
     await bot.add_roles(member, role)
+
+    # Actualiza el nombre del canal con el nuevo numero de miembros
+    guild = member.guild
+    channel_members = bot.get_channel(869697068258701373)
+    await channel_members.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
+
+# Actualiza el nombre del canal con el nuevo numero de miembros
+@bot.event
+async def on_member_remove(member):
+    guild = member.guild
+    channel = bot.get_channel(869697068258701373)
+    await channel.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
 
 # Avisa de que Jota y uCes estan en directo con el comando !jota y !uces
 @bot.command(name='jota')
@@ -219,7 +231,7 @@ async def on_ready():
     # Define el loop para que se ejecute cada 20 segundos
     @tasks.loop(seconds=20)
     async def live_notifs_loop():
-        with open('streamers.json', 'r') as file:
+        with open('data/streamers.json', 'r') as file:
             streamers = json.loads(file.read())
 
         try:
@@ -303,7 +315,7 @@ async def on_ready():
 @commands.has_permissions(kick_members=True)
 async def add_twitch(ctx, twitch_name):
     # Abre y lee el json
-    with open('streamers.json', 'r') as file:
+    with open('data/streamers.json', 'r') as file:
         streamers = json.loads(file.read())
 
     # Coge el ID del usuario pasado con el comando
@@ -312,7 +324,7 @@ async def add_twitch(ctx, twitch_name):
     streamers[user_id] = twitch_name
 
     # Añade los cambios al json
-    with open('streamers.json', 'w') as file:
+    with open('data/streamers.json', 'w') as file:
         file.write(json.dumps(streamers))
     # Avisa si ha funcionado.
     await ctx.send(f'Añadido {twitch_name} para {ctx.author} a la lista.')
@@ -356,20 +368,6 @@ async def encuesta(ctx, question, *options: str):
 
     await react_message.edit(embed=embed)
     await ctx.message.delete()
-
-# Cuando un miembro se une al server, actualiza un canal con el número de miembros que hay
-@bot.event
-async def on_member_join(member):
-    guild = member.guild
-    channel = bot.get_channel(869697068258701373)
-    await channel.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
-
-# Cuando un miembro se va del server, actualiza un canal con el número de miembros que hay
-@bot.event
-async def on_member_remove(member):
-    guild = member.guild
-    channel = bot.get_channel(869697068258701373)
-    await channel.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
 
 print('The bot is ready!')
 bot.run(DISCORD_TOKEN)
