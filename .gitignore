@@ -1,2 +1,5 @@
 /.env
-/streamers.json
+data/streamers.json
+cogs/__pycache__
+/building
+data/texto.mp3
