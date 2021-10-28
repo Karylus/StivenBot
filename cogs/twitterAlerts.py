@@ -51,7 +51,10 @@ class TwitterAlerts(commands.Cog):
             if message is not False:
                 return
 
-            retweeted = status.retweeted
+            if hasattr(status, 'retweeted_status'):
+                retweeted = True
+            else:
+                retweeted = False
 
             # Si es un retweet manda un embed y si no, manda uno distinto
             if retweeted == True:
@@ -89,7 +92,7 @@ class TwitterAlerts(commands.Cog):
                     twitter_embed.set_image(url = f'{image_url}')
 
                 # Manda el embed con un mensaje para avisar
-                await channel.send(f'@everyone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
+                await channel.send(f'@everone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
                                    embed=twitter_embed
                 )
 
@@ -122,7 +125,7 @@ class TwitterAlerts(commands.Cog):
                     twitter_embed.set_image(url = f'{image_url}')
 
                 # Manda el embed con un mensaje para avisar
-                await channel.send(f'@everyone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
+                await channel.send(f'@eeryone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
                                    embed=twitter_embed
                 )
 
