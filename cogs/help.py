@@ -25,7 +25,7 @@ class Help(commands.Cog):
         embed.add_field(name='lee', value='Lee el mensaje que quieras en un canal de voz con el formato: ' \
                         '\n--> !lee "Mensaje"', inline=False)
         embed.add_field(name='Prefijo', value='!', inline=True)
-        embed.add_field(name='Versión', value='V2.0.0', inline=True)
+        embed.add_field(name='Versión', value='V2.1.0', inline=True)
         embed.set_footer(text='Bot creado por Karylus#0007')
 
         await ctx.send(embed=embed)
@@ -39,8 +39,12 @@ class Help(commands.Cog):
         embed.add_field(name='clear "N"', value='Elimina "N" mensajes del chat (Max. 100)', inline=False)
         embed.add_field(name='añadirtwitch "nombreTwitch"', value='Se relaciona el ID de discord que ha mandado el mensaje' \
                         ' con el nombre de Twitch, lo tiene que usar la persona del Twitch', inline=False)
+        embed.add_field(name='mute', value='Mutea a un usuario con el formato:' \
+                        '\n--> !mute @usuario [Motivo]', inline=False)
+        embed.add_field(name='unmute', value='Desmutea a un usuario con el formato:' \
+                        '\n--> !unmute @usuario', inline=False)
         embed.add_field(name='Prefijo', value='!', inline=True)
-        embed.add_field(name='Versión', value='V2.0.0', inline=True)
+        embed.add_field(name='Versión', value='V2.1.0', inline=True)
         embed.set_footer(text='Bot creado por Karylus#0007')
 
         await ctx.send(embed=embed)

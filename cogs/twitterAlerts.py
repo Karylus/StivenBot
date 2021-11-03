@@ -67,7 +67,7 @@ class TwitterAlerts(commands.Cog):
                 twitter_embed = discord.Embed(title=f'**{name} ha retweeteado:**',
                                               url='https://twitter.com/twitter/statuses/' +
                                               str(tweets),
-                                              description=f'{status.full_text}',
+                                              description=f'{status.retweeted_status.full_text}',
                                               color=0x00b1e9,
                                               timestamp=datetime.datetime.utcnow()
                 )
@@ -85,14 +85,14 @@ class TwitterAlerts(commands.Cog):
                 )
 
                 # Si tiene foto, la añade al embed
-                if 'media' in status.entities:
-                    for image in status.entities['media']:
+                if 'media' in status.retweeted_status.entities:
+                    for image in status.retweeted_status.entities['media']:
                         image_url = image['media_url']
 
                     twitter_embed.set_image(url = f'{image_url}')
 
                 # Manda el embed con un mensaje para avisar
-                await channel.send(f'@everone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
+                await channel.send(f'@everyone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
                                    embed=twitter_embed
                 )
 
@@ -125,7 +125,7 @@ class TwitterAlerts(commands.Cog):
                     twitter_embed.set_image(url = f'{image_url}')
 
                 # Manda el embed con un mensaje para avisar
-                await channel.send(f'@eeryone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
+                await channel.send(f'@everyone Hay un nuevo Tweet de {name}: https://twitter.com/twitter/statuses/' + str(tweets),
                                    embed=twitter_embed
                 )
 

@@ -10,7 +10,7 @@ cwd = str(cwd)
 
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V2.0.0'), \
+bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V2.1.0'), 
                     help_command=None)
 
 # Cargo el token de Discord
