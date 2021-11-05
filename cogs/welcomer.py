@@ -39,11 +39,17 @@ class Welcomer(commands.Cog):
         banner.convert('RGB').save(welcome_file_path)
 
         # Escribe el nombre del usuario en el banner
-        user_name = member.name
-        font = ImageFont.truetype('data/arial.ttf', 100)
         img = Image.open(welcome_file_path)
         text = ImageDraw.Draw(img)
-        text.text((735, 600), f'@{user_name}', (255, 0, 0), font=font)
+        font = ImageFont.truetype('data/arial.ttf', 100)
+
+        user_name = member.name
+        msg = f'@{user_name}'
+
+        text_width, text_height = draw.textsize(msg, font)
+        position = ((1920-text_width)/2,(1080-text_height)/2)
+        
+        text.text(position, msg, (255, 0, 0), font=font)
         img.save(welcome_file_path)
 
         # Envia la imagen y un mensaje de bienvenida
