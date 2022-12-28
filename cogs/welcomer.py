@@ -73,5 +73,5 @@ class Welcomer(commands.Cog):
         channel = self.bot.get_channel(869697068258701373)
         await channel.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
 
-def setup(bot):
-    bot.add_cog(Welcomer(bot))
+async def setup(bot):
+    await bot.add_cog(Welcomer(bot))

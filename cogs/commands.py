@@ -1,9 +1,8 @@
 import discord
 from discord.ext import  commands
-
 import random
-
 import json
+from googletrans import Translator
 
 class Commands(commands.Cog):
     def __init__(self,bot):
@@ -174,6 +173,21 @@ class Commands(commands.Cog):
     async def mute_error(ctx, error):
         if isinstance(error, commands.MissingPermissions):
             await ctx.send('No tienes permisos espabilado.')
+    
+    @commands.command(name='calcular')
+    async def calcular(ctx, operation, nums):
+        if operation not in ['+', '-', '*', '/']:
+            await ctx.send('Tienes que decirme qué operación hacer.')
+        
+        var = f'{operation}'.join(nums)
+        await ctx.send(f'{var} = {eval(var)}')
 
-def setup(bot):
-    bot.add_cog(Commands(bot))
+    @commands.command(name='traducir')
+    async def traducir(self, ctx, lang, *, thing):
+        translator = Translator()
+        translation = translator.translate(thing, dest=lang)
+        await ctx.send(translation.text)
+    
+
+async def setup(bot):
+    await bot.add_cog(Commands(bot))

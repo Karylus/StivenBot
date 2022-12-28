@@ -30,5 +30,5 @@ class MessageReact(commands.Cog):
         if message.content.startswith('makelele'):
             await message.reply('https://i.imgur.com/IQisILF.mp4', mention_author=False)                                
 
-def setup(bot):
-    bot.add_cog(MessageReact(bot))
+async def setup(bot):
+    await bot.add_cog(MessageReact(bot))

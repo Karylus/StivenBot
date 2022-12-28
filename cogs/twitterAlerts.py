@@ -21,7 +21,8 @@ class TwitterAlerts(commands.Cog):
 
     auth = tweepy.OAuthHandler(consumer_id, consumer_secret)
     auth.set_access_token(access_id, access_secret)
-    api = tweepy.API(auth)
+
+    api = tweepy.API(auth, wait_on_rate_limit = True)
 
     # Funcion que comprueba si se ha enviado ya un Tweet
     async def has_notif_already_sent(self, channel, tweets):
@@ -33,11 +34,13 @@ class TwitterAlerts(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        print('TwitterAlerts Cog has been loaded\n------')
+
         # Define el loop para que se ejecute cada 20 segundos
         @tasks.loop(seconds=20)
         async def live_notifs_loop(self):
             # Guardo el canal donde se va a enviar el mensaje
-            channel = self.bot.get_channel(736523939999645710)
+            channel = self.bot.get_channel(1004842070848061513)
 
             # Guarado el ultimo tweet o retweet
             status_list = self.api.user_timeline(
@@ -57,7 +60,7 @@ class TwitterAlerts(commands.Cog):
                 retweeted = False
 
             # Si es un retweet manda un embed y si no, manda uno distinto
-            if retweeted == True:
+            if retweeted:
                 name = status.author.name
                 screen_name = status.author.screen_name
                 orig_screen_name = status.retweeted_status.author.screen_name
@@ -132,5 +135,8 @@ class TwitterAlerts(commands.Cog):
         # Empieza el loop
         live_notifs_loop.start(self)
 
-def setup(bot):
-    bot.add_cog(TwitterAlerts(bot))
+        if not live_notifs_loop.is_running():
+            live_notifs_loop.restart(self)
+
+async def setup(bot):
+    await bot.add_cog(TwitterAlerts(bot))

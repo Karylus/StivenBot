@@ -58,6 +58,8 @@ class TwitchAlerts(commands.Cog):
     # Evento que se encarga de comprobar y avisar si hay alguien en directo de la lista de streamers
     @commands.Cog.listener()
     async def on_ready(self):
+        print('TwitchAlerts Cog has been loaded\n------')
+
         # Define el loop para que se ejecute cada 20 segundos
         @tasks.loop(seconds=20)
         async def live_notifs_loop(self):
@@ -67,8 +69,8 @@ class TwitchAlerts(commands.Cog):
             try:
                 if streamers is not None:
                     guild = self.bot.get_guild(736523939102195746)
-                    channel = self.bot.get_channel(845683127870423070)
-                    role = get(guild.roles, id=898999981770412124)
+                    channel = self.bot.get_channel(1004841968628678798)
+                    role = guild.get_role(898999981770412124)
 
                     # Hace loop en json para obtener el nombre de Twitch y el de discord
                     for user_id, twitch_name in streamers.items():
@@ -140,5 +142,8 @@ class TwitchAlerts(commands.Cog):
         # Empieza el loop
         live_notifs_loop.start(self)
 
-def setup(bot):
-    bot.add_cog(TwitchAlerts(bot))
+        if not live_notifs_loop.is_running():
+            live_notifs_loop.restart(self)
+
+async def setup(bot):
+    await bot.add_cog(TwitchAlerts(bot))
