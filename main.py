@@ -4,13 +4,16 @@ from pathlib import Path
 
 import discord
 from discord.ext import commands
+import asyncio
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V2.0.0'), \
+intents.message_content =True
+
+bot = commands.Bot(command_prefix='!', intents=intents, activity = discord.Game(name='!help | V2.1.0'), 
                     help_command=None)
 
 # Cargo el token de Discord
@@ -21,9 +24,14 @@ DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 async def on_ready():
     print('The bot is ready\n------')
 
-if __name__ == '__main__':
-    for file in os.listdir(cwd+"/cogs"):
-        if file.endswith('.py') and not file.startswith('__'):
-            bot.load_extension(f'cogs.{file[:-3]}')
+async def load_extensions():
+    for filename in os.listdir(cwd+"/cogs"):
+        if filename.endswith(".py") and not filename.startswith('__'):
+            await bot.load_extension(f"cogs.{filename[:-3]}")
 
-    bot.run(DISCORD_TOKEN)
+async def main():
+    async with bot:
+        await load_extensions()
+        await bot.start(DISCORD_TOKEN)
+
+asyncio.run(main())

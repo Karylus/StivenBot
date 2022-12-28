@@ -39,33 +39,39 @@ class Welcomer(commands.Cog):
         banner.convert('RGB').save(welcome_file_path)
 
         # Escribe el nombre del usuario en el banner
-        user_name = member.name
-        font = ImageFont.truetype('data/arial.ttf', 100)
         img = Image.open(welcome_file_path)
         text = ImageDraw.Draw(img)
-        text.text((735, 600), f'@{user_name}', (255, 0, 0), font=font)
+        font = ImageFont.truetype('data/arial.ttf', 100)
+
+        user_name = member.name
+        msg = f'@{user_name}'
+
+        text_width, text_height = draw.textsize(msg, font)
+        position = ((1920-text_width)/2,(1080-text_height)/2)
+        
+        text.text(position, msg, (255, 0, 0), font=font)
         img.save(welcome_file_path)
 
         # Envia la imagen y un mensaje de bienvenida
-        channel = self.bot.get_channel(899273141841432606)
+        channel = self.bot.get_channel(736523939337076759)
         await channel.send(file=discord.File(welcome_file_path))
         await channel.send(f'¡Acaba de llegar {member.mention} !')
 
         # Asigna un rol en especifico
-        guild = self.bot.get_guild(866065923562405939)
-        role = get(guild.roles, id=866416360828829756)
+        guild = self.bot.get_guild(736523939102195746)
+        role = get(guild.roles, id=736523939102195747)
         await member.add_roles(role)
 
         # Actualiza el nombre del canal con el nuevo numero de miembros
-        channel_members = self.bot.get_channel(899361663550120016)
+        channel_members = self.bot.get_channel(869697068258701373)
         await channel_members.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
 
     # Actualiza el nombre del canal con el nuevo numero de miembros
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         guild = member.guild
-        channel = self.bot.get_channel(899361663550120016)
+        channel = self.bot.get_channel(869697068258701373)
         await channel.edit(name = f'𝐌𝐢𝐞𝐦𝐛𝐫𝐨𝐬: {guild.member_count}')
 
-def setup(bot):
-    bot.add_cog(Welcomer(bot))
+async def setup(bot):
+    await bot.add_cog(Welcomer(bot))

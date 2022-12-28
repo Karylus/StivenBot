@@ -1,12 +1,9 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
-import os
 import asyncio
 
-import nacl
 from gtts import gTTS
-import ffmpy
 
 
 class ReadMessage(commands.Cog):
@@ -72,5 +69,5 @@ class ReadMessage(commands.Cog):
         except TypeError as e:
             await ctx.send(f'TypeError exception:\n`{e}`')
 
-def setup(bot):
-    bot.add_cog(ReadMessage(bot))
+async def setup(bot):
+    await bot.add_cog(ReadMessage(bot))

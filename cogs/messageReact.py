@@ -24,6 +24,11 @@ class MessageReact(commands.Cog):
         if message.content.startswith('UwU'):
             await message.reply('¿”UwU"? ¿Por qué dices UwU? ¿Cuál es el propósito?'
                                 ' ¿Te me estás insinuando? ¿Quieres que te bese apasionadamente?', mention_author=False)
+    
+    @commands.Cog.listener('on_message')
+    async def makelele(self, message):
+        if message.content.startswith('makelele'):
+            await message.reply('https://i.imgur.com/IQisILF.mp4', mention_author=False)                                
 
-def setup(bot):
-    bot.add_cog(MessageReact(bot))
+async def setup(bot):
+    await bot.add_cog(MessageReact(bot))

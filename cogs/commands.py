@@ -1,9 +1,8 @@
 import discord
 from discord.ext import  commands
-
 import random
-
 import json
+from googletrans import Translator
 
 class Commands(commands.Cog):
     def __init__(self,bot):
@@ -16,8 +15,8 @@ class Commands(commands.Cog):
     # Citas de Stiven guardadas en frasesStiven.txt
     @commands.command(name='stiven')
     async def stiven(self, ctx):
-        with open('data/frasesStiven.txt', 'r') as f:
-            read = f.read()
+        with open('data/frasesStiven.txt', 'r') as file:
+            read = file.read()
             array = read.split('\n')
             quote = random.choice(array)
 
@@ -84,7 +83,8 @@ class Commands(commands.Cog):
 
         pollEmbed = discord.Embed(
             title=f'Sugerencia de {ctx.author}', description=f'{question}',
-            color=0xfdc700)
+            color=0xfdc700
+        )
 
         await ctx.message.delete()
         poll_msg = await ctx.send(embed=pollEmbed)
@@ -126,6 +126,68 @@ class Commands(commands.Cog):
 
         await react_message.edit(embed=embed)
         await ctx.message.delete()
+    
+    # Mutea a un usuario nombrado y aporta un motivo
+    @commands.command(name='mute', pass_context = True)
+    @commands.has_permissions(kick_members=True)
+    async def mute(self, ctx, member: discord.Member, *, reason=None):
+        guild = ctx.guild
+        mutedRole = discord.utils.get(guild.roles, name='Muted')
 
-def setup(bot):
-    bot.add_cog(Commands(bot))
+        if not mutedRole:
+            mutedRole = await guild.create_role(name='Muted')
+
+        for channel in guild.channels:
+            await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True, read_messages=False)
+
+        embed = discord.Embed(title='Muteado', 
+                              description=f'{member.mention} ha sido muteado', 
+                              color=0xfdc700
+        )
+        embed.add_field(name='Razón:', value=reason, inline=False)
+
+        await ctx.send(embed=embed)
+
+        await member.add_roles(mutedRole, reason=reason)
+    
+    @mute.error
+    async def mute_error(ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send('No tienes permisos espabilado.')
+    
+    # Desmutea a un usuario
+    @commands.command(name='unmute')
+    @commands.has_permissions(kick_members=True)
+    async def unmute(self, ctx, member: discord.Member):
+        mutedRole = discord.utils.get(ctx.guild.roles, name='Muted')
+
+        await member.remove_roles(mutedRole)
+
+        embed = discord.Embed(title='Desmuteado', 
+                              description=f'Se ha desmuteado a: {member.mention}',
+                              color=0xfdc700
+        )
+        await ctx.send(embed=embed)
+    
+    @mute.error
+    async def mute_error(ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send('No tienes permisos espabilado.')
+    
+    @commands.command(name='calcular')
+    async def calcular(ctx, operation, nums):
+        if operation not in ['+', '-', '*', '/']:
+            await ctx.send('Tienes que decirme qué operación hacer.')
+        
+        var = f'{operation}'.join(nums)
+        await ctx.send(f'{var} = {eval(var)}')
+
+    @commands.command(name='traducir')
+    async def traducir(self, ctx, lang, *, thing):
+        translator = Translator()
+        translation = translator.translate(thing, dest=lang)
+        await ctx.send(translation.text)
+    
+
+async def setup(bot):
+    await bot.add_cog(Commands(bot))
